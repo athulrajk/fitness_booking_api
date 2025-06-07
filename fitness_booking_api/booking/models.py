@@ -9,6 +9,7 @@ class FitnessClass(models.Model):
     instructor = models.CharField(max_length=100)
     total_slots = models.PositiveIntegerField()
     available_slots = models.PositiveIntegerField()
+    active = models.BooleanField()
 
     def __str__(self):
         return f"{self.name} with {self.instructor} at {self.start_time}"

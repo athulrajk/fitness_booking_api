@@ -7,9 +7,20 @@ from .serializers import FitnessClassSerializer, BookingSerializer
 from django.utils import timezone
 from pytz import timezone as pytz_timezone
 
-class ClassListView(generics.ListAPIView):
-    queryset = FitnessClass.objects.filter(start_time__gte=timezone.now()).order_by('start_time')
-    serializer_class = FitnessClassSerializer
+class ClassListView(APIView):
+    def get(self, request, pk=None):
+        if pk:
+            try:
+                cls = FitnessClass.objects.get(pk=pk)
+            except FitnessClass.DoesNotExist:
+                return Response({"error": "Class not found."}, status=404)
+            serializer = FitnessClassSerializer(cls, context={'request': request})
+            return Response(serializer.data)
+
+        queryset = FitnessClass.objects.filter(active=True).order_by('start_time')
+        serializer = FitnessClassSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)
+
 
 class BookingCreateView(APIView):
     def post(self, request):
@@ -18,6 +29,7 @@ class BookingCreateView(APIView):
         client_email = request.data.get("client_email")
 
         if not all([class_id, client_name, client_email]):
+            print("inisdeeeee")
             return Response({"error": "Missing required fields."}, status=400)
 
         try:
@@ -41,7 +53,8 @@ class BookingCreateView(APIView):
 
 class BookingListView(APIView):
     def get(self, request):
-        email = request.query_params.get("email")
+        print("request.query_params",request.query_params)
+        email = request.query_params.get("client_email")
         if not email:
             return Response({"error": "Email is required"}, status=400)
 

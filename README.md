@@ -14,7 +14,7 @@ A RESTful API built using **Django REST Framework** to manage fitness class list
 
 ## ⚙️ Installation & Setup
 
-### 1. Clone the Repository
+###  Clone the Repository
 
 ```bash
 git clone https://github.com/athulrajk/fitness_booking_api.git
